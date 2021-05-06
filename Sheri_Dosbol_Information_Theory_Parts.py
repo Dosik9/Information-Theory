@@ -35,6 +35,7 @@ def calculate():
         print(colored('[4]. Calculate all punctuations', 'green'))
         print(colored('[5]. Calculate all ' ' letters', 'green'))
         print(colored('[6]. Calculate one character', 'green'))
+        print(colored('[7]. Calculate for each character', 'magenta'))
         print(colored('[0]. Exit', 'green'))
         x = int(input(colored('Choose one: ', 'blue')))
 
@@ -84,11 +85,22 @@ def calculate():
             print('P(space) = ' + pprobability(ch_count, rt) )
 
 
-        elif x == 6:    # Calculate Probability for all one character letters
+        elif x == 6:    # Calculate Probability for one character
             character = input('Enter character: ').lower()
             ch_count = rt.lower().count(character)
 
             print('P(%s) = ' %character + pprobability(ch_count, rt))
+        elif x == 7:    # Calculate Probability for each character
+            symbols=[]
+
+            # in this cycle we check for dublicate
+            for r in rt:
+                if r not in symbols: # if symbol are repeated we skip this symbol
+                    symbols.append(r)
+
+            for s in symbols:
+                v = "%.3f" % (rt.count(s) / len(rt)) # calculate probability
+                print('{0} - {1}'.format(s,v))
 
         elif x == 0:
             break
@@ -99,7 +111,7 @@ def calculate():
 # Part 2 : algorithm Shannon-Fano
 def ShF():
     try:    #ordinnary try-except which open a file
-        sf = open('Text.txt').read().lower()
+        sf = open('Text.txt').read()
         sf
     except IOError:
         print('File %s not found. First you need to create a file!' % colored('Text.txt', 'red'))
@@ -150,7 +162,7 @@ def ShF():
         for x in Shannon.keys():
             if s == x:
                 word+=Shannon[x]
-
+    print('Cipher: ')
     print(word)
 
 # save on file
@@ -181,20 +193,22 @@ def ShF_decode(cipher=''): # this function work with attribute and without attri
         print('File %s not found. First you need to create a file!' % colored('Text2.txt', 'red'))
         print('\n')
 
-
+    print('Key: ')
     print(d)
+    print('Cipher: ')
     print(cipher)
 
 
     word =''
     code=''
     for w in cipher: # this cycle decoded Shannon
-        code+=w # after each check, a new cipher element is added
+        code+=w # after each check, a new cipher element is adding
         for q in d.keys():
             if code==d[q]: # check key
                 word+=q
                 code=''
 
+    print('Decoded text: ')
     print(word)
 
 
@@ -227,6 +241,7 @@ def Hamming():
         code += c
         x+=1
 
+    print('4-digit code: ')
     print(code)
 
     z=1
@@ -249,11 +264,12 @@ def Hamming():
                 r3=str(i1 ^ i2 ^ i4)
                 # Hamming (4,7) block
                 block=str(i1)+str(i2)+str(i3)+str(i4)+r1+r2+r3
-                print(block)
+                # print(block)
                 blocks.append(block) # collect all block to one code
         z+=1
         n+=1
 
+    print('7-digit code: ')
     print(blocks)
     return blocks
 
@@ -263,25 +279,25 @@ def error_Hamming():
     blocks = Hamming()
     error_blocks=[]
 
-    print('******************************************')
+    print('********************Part 5**********************')
 
     # in this cycle we add one artificial error
     for a in blocks:
-        i = random.randint(0,7) # define random bit
+        i = random.randint(0,6) # define random bit. (0,6) because is index of array
         v=0
         e_block = ''
         # here we change our randomly selected bit to an error value
         for b in a:
             if v == i:
-                if b =='0':
-                    b ='1'
+                if b == '0':
+                    b = '1'
                 else:
-                    b='0'
+                    b = '0'
             v += 1
             e_block+=b
         error_blocks.append(e_block)
         continue
-
+    print('Cipher with errors: ')
     print(error_blocks)
     return error_blocks
 
@@ -291,6 +307,7 @@ def decode_Hamming():
     # dictionary with Error syndrom and error bit
     decoding_table={'000':'No error', '001':'r3', '010':'r2', '011':'i4', '100':'r1', '101':'i1', '110':'i3', '111':'i2'}
     blocks=error_Hamming()
+    print('*****************Part 6*****************')
     correct_block=[]
     cr_block={}
     for block in blocks:
@@ -334,7 +351,7 @@ def decode_Hamming():
     ShF_decode(code)
 
 
-# a regular menu based on prints and conditions
+# a typical menu based on prints and conditions
 while True:
     print(colored('[1]. Create File or Edit Text','green'))
     print(colored('[2]. *Part 1* Calculate','green'))
